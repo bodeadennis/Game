@@ -1,5 +1,14 @@
 const canvas = document.getElementById('tetris');
 const context = canvas.getContext('2d');
+
+//Sunete
+myAudio = new Audio('song.mp3');
+myAudio.loop = true;
+myAudio.play();
+cade = new Audio('cade.wav');
+reset = new Audio('reset.wav');
+scor = new Audio('scor.wav');
+
 //Mareste tot de 20 de ori
 context.scale(20, 20);
 //Cand se formeaza linie orizontala sa dispara
@@ -8,7 +17,9 @@ function arenaSweep() {
     outer: for (let y = arena.length -1; y > 0; --y) {
         for (let x = 0; x < arena[y].length; ++x) {
             if (arena[y][x] === 0) {
+
                 continue outer;
+
             }
         }
 
@@ -18,8 +29,10 @@ function arenaSweep() {
 
         player.score += rowCount * 10;
         rowCount *= 2;
+        scor.play();
     }
 }
+
 
 function collide(arena, player) {
     const m = player.matrix;
@@ -103,6 +116,7 @@ function drawMatrix(matrix, offset) {
 function draw() {
     context.fillStyle = '#000';
     context.fillRect(0, 0, canvas.width, canvas.height);
+
 //Cand piesa ajunge jos sau atinge alta sa se opreasca
     drawMatrix(arena, {x: 0, y: 0});
     drawMatrix(player.matrix, player.pos);
@@ -147,6 +161,7 @@ function playerDrop() {
         playerReset();
         arenaSweep();
         updateScore();
+        cade.play();
     }
     dropCounter = 0;
 }
@@ -161,7 +176,7 @@ function playerMove(offset) {
         player.pos.x -= offset;
     }
 }
-//Functie care alege piesele random 
+//Functie care alege piesele random
 function playerReset() {
     const pieces = 'TJLOSZI';
     player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
@@ -173,6 +188,7 @@ function playerReset() {
         arena.forEach(row => row.fill(0));
         player.score = 0;
         updateScore();
+        reset.play();
     }
 }
 //Piesa evita coliziunea de la marginile ecranului
@@ -191,7 +207,7 @@ function playerRotate(dir) {
         }
     }
 }
-//Forma o sa cada la fiecare o secunda 
+//Forma o sa cada la fiecare o secunda
 let dropCounter = 0;
 let dropInterval = 500;
 
@@ -213,9 +229,9 @@ function update(time = 0) {
 function updateScore() {
     document.getElementById('score').innerText = player.score;
 }
-//Sa se miste stanga daca apasam segeata de stanga 
+//Sa se miste stanga daca apasam segeata de stanga
 //else daca apasam dreapta sa se miste la dreapta
-//Sa se intoarca piesa la stanga sau la dreapta 
+//Sa se intoarca piesa la stanga sau la dreapta
 document.addEventListener('keydown', event => {
     if (event.keyCode === 37 || event.keyCode === 65 ) {
     playerMove(-1);
